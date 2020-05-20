@@ -11,16 +11,16 @@ public class Movie {
     private double voteAverage;
     private String releaseDate;
 
-    public Movie(int id, int voteCount, String title, String originalTitle, String overview, String posterPuth, String backgdropPuth, double voteAverage, String realeaseDate) {
+    public Movie(int id, int voteCount, String title, String originalTitle, String overview, String posterPath, String backgdropPath, double voteAverage, String releaseDate) {
         this.id = id;
         this.voteCount = voteCount;
         this.title = title;
         this.originalTitle = originalTitle;
         this.overview = overview;
-        this.posterPath = posterPuth;
-        this.backdropPath = backgdropPuth;
+        this.posterPath = posterPath;
+        this.backdropPath = backgdropPath;
         this.voteAverage = voteAverage;
-        this.releaseDate = realeaseDate;
+        this.releaseDate = releaseDate;
     }
 
     public int getId() {
