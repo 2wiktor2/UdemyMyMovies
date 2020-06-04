@@ -1,5 +1,6 @@
 package com.example.mymovies;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -11,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,14 +34,15 @@ public class MainActivity extends AppCompatActivity {
     private MovieAdapter movieAdapter;
     private TextView textViewTopRated;
     private TextView textViewPopularity;
-
     private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
         switchSort = findViewById(R.id.switchSort);
         textViewPopularity = findViewById(R.id.textViewPopularity);
         textViewTopRated = findViewById(R.id.textViewTopRated);
@@ -58,7 +61,11 @@ public class MainActivity extends AppCompatActivity {
         movieAdapter.setOnPosterClickListener(new MovieAdapter.OnPosterClickListener() {
             @Override
             public void onPosterClick(int position) {
-                Toast.makeText(MainActivity.this, "Clicked: " + position, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(MainActivity.this, "Clicked: " + position, Toast.LENGTH_SHORT).show();
+                Movie movie = movieAdapter.getMovies().get(position);
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("id", movie.getId());
+                startActivity(intent);
             }
         });
         movieAdapter.setOnReachEndListener(new MovieAdapter.OnReachEndListener() {
