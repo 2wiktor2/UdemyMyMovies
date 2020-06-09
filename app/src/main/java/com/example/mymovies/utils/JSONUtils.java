@@ -1,6 +1,8 @@
 package com.example.mymovies.utils;
 
 import com.example.mymovies.data.Movie;
+import com.example.mymovies.data.Review;
+import com.example.mymovies.data.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,6 +13,16 @@ import java.util.ArrayList;
 public class JSONUtils {
 
     private static final String KEY_RESULTS = "results";
+
+    // Для отзывов
+    private static final String KEY_AUTHOR = "author";
+    private static final String KEY_CONTENT = "content";
+    // Для видео
+    private static final String KEY_KEY_OF_VIDIO = "key";
+    private static final String KEY_NAME = "name";
+    private static final String BASE_UTUBE_URL = "https://www.youtube.com/watch?v=";
+
+    // Вся информация о фильме
     private static final String KEY_VOTE_COUNT = "vote_count";
     private static final String KEY_ID = "id";
     private static final String KEY_TITLE = "title";
@@ -25,22 +37,63 @@ public class JSONUtils {
     public static final String SMALL_POSTER_SIZE = "w185";
     public static final String BIG_POSTER_SIZE = "w780";
 
-    public static ArrayList<Movie> getMovieFromJSON (JSONObject jsonObject){
-        ArrayList<Movie> result = new ArrayList<>();
-        if (jsonObject == null){
+    public static ArrayList<Review> getReviewsFromJSON(JSONObject jsonObject) {
+        ArrayList<Review> result = new ArrayList<>();
+        if (jsonObject == null) {
             return result;
         }
         try {
             JSONArray jsonArray = jsonObject.getJSONArray(KEY_RESULTS);
-            for (int i = 0; i < jsonArray.length(); i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObjectReview = jsonArray.getJSONObject(i);
+                String autor = jsonObjectReview.getString(KEY_AUTHOR);
+                String content = jsonObjectReview.getString(KEY_CONTENT);
+                Review review = new Review(autor, content);
+                result.add(review);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static ArrayList<Trailer> getTrailersFromJSON(JSONObject jsonObject) {
+        ArrayList<Trailer> result = new ArrayList<>();
+        if (jsonObject == null) {
+            return result;
+        }
+        try {
+            JSONArray jsonArray = jsonObject.getJSONArray(KEY_RESULTS);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObjectTrailers = jsonArray.getJSONObject(i);
+                String key = BASE_UTUBE_URL + jsonObjectTrailers.getString(KEY_KEY_OF_VIDIO);
+                String name = jsonObjectTrailers.getString(KEY_NAME);
+                Trailer trailer = new Trailer(key, name);
+                result.add(trailer);
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static ArrayList<Movie> getMovieFromJSON(JSONObject jsonObject) {
+        ArrayList<Movie> result = new ArrayList<>();
+        if (jsonObject == null) {
+            return result;
+        }
+        try {
+            JSONArray jsonArray = jsonObject.getJSONArray(KEY_RESULTS);
+            for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject objectMovie = jsonArray.getJSONObject(i);
                 int id = objectMovie.getInt(KEY_ID);
                 int voteCount = objectMovie.getInt(KEY_VOTE_COUNT);
                 String title = objectMovie.getString(KEY_TITLE);
                 String originalTitle = objectMovie.getString(KEY_ORIGINAL_TITLE);
                 String overview = objectMovie.getString(KEY_OVERVIEW);
-                String posterPath = BASE_POSTER_URL + SMALL_POSTER_SIZE+ objectMovie.getString(KEY_POSTER_PATH);
-                String bigPosterPath = BASE_POSTER_URL+ BIG_POSTER_SIZE + objectMovie.getString(KEY_POSTER_PATH);
+                String posterPath = BASE_POSTER_URL + SMALL_POSTER_SIZE + objectMovie.getString(KEY_POSTER_PATH);
+                String bigPosterPath = BASE_POSTER_URL + BIG_POSTER_SIZE + objectMovie.getString(KEY_POSTER_PATH);
                 String backdropPath = objectMovie.getString(KEY_BACKDROP_PATH);
                 double voteAverege = objectMovie.getDouble(KEY_VOTE_AVERAGE);
                 String realeaseDate = objectMovie.getString(KEY_REALEASE_DATE);
