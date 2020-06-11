@@ -16,15 +16,14 @@ import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 public class NetworkUtils {
-    private static final String BASE_URL_VIDIOS = "https://api.themoviedb.org/3/movie/%s/videos";
+    private static final String BASE_URL = "https://api.themoviedb.org/3/discover/movie";
+    private static final String BASE_URL_VIDEOS = "https://api.themoviedb.org/3/movie/%s/videos";
     private static final String BASE_URL_REVIEWS = "https://api.themoviedb.org/3/movie/%s/reviews";
 
-    private static final String BASE_URL = "https://api.themoviedb.org/3/discover/movie";
-
-    private static final String PARAM_API_KEY = "api_key";
-    private static final String PARAM_LANGUAGE = "language";
-    private static final String PARAM_SORT_BY = "sort_by";
-    private static final String PARAM_PAGE = "page";
+    private static final String PARAMS_API_KEY = "api_key";
+    private static final String PARAMS_LANGUAGE = "language";
+    private static final String PARAMS_SORT_BY = "sort_by";
+    private static final String PARAMS_PAGE = "page";
 
     private static final String API_KEY = "c925e78c54a854734b5ece1644e0bd48";
     private static final String LANGUAGE_VALUE = "ru-RU";
@@ -34,11 +33,10 @@ public class NetworkUtils {
     public static final int POPULARITY = 0;
     public static final int TOP_RATED = 1;
 
-    private static URL buildURLToReviews(int id) {
-        Uri uri = Uri.parse(String.format(BASE_URL_VIDIOS, id)).buildUpon()
-                .appendQueryParameter(PARAM_API_KEY, API_KEY)
-                .appendQueryParameter(PARAM_LANGUAGE, LANGUAGE_VALUE)
-                .build();
+    private static URL buildURLToVideos(int id) {
+        Uri uri = Uri.parse(String.format(BASE_URL_VIDEOS, id)).buildUpon()
+                .appendQueryParameter(PARAMS_API_KEY, API_KEY)
+                .appendQueryParameter(PARAMS_LANGUAGE, LANGUAGE_VALUE).build();
         try {
             return new URL(uri.toString());
         } catch (MalformedURLException e) {
@@ -47,11 +45,9 @@ public class NetworkUtils {
         return null;
     }
 
-    private static URL buildURLToVideos(int id) {
+    private static URL buildURLToReviews(int id) {
         Uri uri = Uri.parse(String.format(BASE_URL_REVIEWS, id)).buildUpon()
-                .appendQueryParameter(PARAM_API_KEY, API_KEY)
-                .appendQueryParameter(PARAM_LANGUAGE, LANGUAGE_VALUE)
-                .build();
+                .appendQueryParameter(PARAMS_API_KEY, API_KEY).build();
         try {
             return new URL(uri.toString());
         } catch (MalformedURLException e) {
@@ -62,15 +58,17 @@ public class NetworkUtils {
 
     private static URL buildURL(int sortBy, int page) {
         URL result = null;
-        String methodOgSort;
+        String methodOfSort;
         if (sortBy == POPULARITY) {
-            methodOgSort = SORT_BY_POPULARITY;
-        } else methodOgSort = SORT_BY_TOP_RATED;
+            methodOfSort = SORT_BY_POPULARITY;
+        } else {
+            methodOfSort = SORT_BY_TOP_RATED;
+        }
         Uri uri = Uri.parse(BASE_URL).buildUpon()
-                .appendQueryParameter(PARAM_API_KEY, API_KEY)
-                .appendQueryParameter(PARAM_LANGUAGE, LANGUAGE_VALUE)
-                .appendQueryParameter(PARAM_SORT_BY, methodOgSort)
-                .appendQueryParameter(PARAM_PAGE, Integer.toString(page))
+                .appendQueryParameter(PARAMS_API_KEY, API_KEY)
+                .appendQueryParameter(PARAMS_LANGUAGE, LANGUAGE_VALUE)
+                .appendQueryParameter(PARAMS_SORT_BY, methodOfSort)
+                .appendQueryParameter(PARAMS_PAGE, Integer.toString(page))
                 .build();
         try {
             result = new URL(uri.toString());
@@ -80,20 +78,7 @@ public class NetworkUtils {
         return result;
     }
 
-    public static JSONObject getJsonFromNetwork(int sortBy, int page) {
-        JSONObject result = null;
-        URL url = buildURL(sortBy, page);
-        try {
-            result = new JSONLoadTask().execute(url).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public static JSONObject getJsonForVideos(int id) {
+    public static JSONObject getJSONForVideos(int id) {
         JSONObject result = null;
         URL url = buildURLToVideos(id);
         try {
@@ -106,7 +91,7 @@ public class NetworkUtils {
         return result;
     }
 
-    public static JSONObject getJsonForReviews(int id) {
+    public static JSONObject getJSONForReviews(int id) {
         JSONObject result = null;
         URL url = buildURLToReviews(id);
         try {
@@ -119,13 +104,25 @@ public class NetworkUtils {
         return result;
     }
 
-    private static class JSONLoadTask extends AsyncTask<URL, Void, JSONObject> {
+    public static JSONObject getJSONFromNetwork(int sortBy, int page) {
+        JSONObject result = null;
+        URL url = buildURL(sortBy, page);
+        try {
+            result = new JSONLoadTask().execute(url).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
+    private static class JSONLoadTask extends AsyncTask<URL, Void, JSONObject> {
         @Override
         protected JSONObject doInBackground(URL... urls) {
             JSONObject result = null;
             if (urls == null || urls.length == 0) {
-                return result;
+                return null;
             }
             HttpURLConnection connection = null;
             try {

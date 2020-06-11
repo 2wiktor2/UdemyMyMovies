@@ -18,9 +18,9 @@ public class JSONUtils {
     private static final String KEY_AUTHOR = "author";
     private static final String KEY_CONTENT = "content";
     // Для видео
-    private static final String KEY_KEY_OF_VIDIO = "key";
+    private static final String KEY_KEY_OF_VIDEO = "key";
     private static final String KEY_NAME = "name";
-    private static final String BASE_UTUBE_URL = "https://www.youtube.com/watch?v=";
+    private static final String BASE_YOUTUBE_URL = "https://www.youtube.com/watch?v=";
 
     // Вся информация о фильме
     private static final String KEY_VOTE_COUNT = "vote_count";
@@ -37,6 +37,7 @@ public class JSONUtils {
     public static final String SMALL_POSTER_SIZE = "w185";
     public static final String BIG_POSTER_SIZE = "w780";
 
+
     public static ArrayList<Review> getReviewsFromJSON(JSONObject jsonObject) {
         ArrayList<Review> result = new ArrayList<>();
         if (jsonObject == null) {
@@ -46,9 +47,9 @@ public class JSONUtils {
             JSONArray jsonArray = jsonObject.getJSONArray(KEY_RESULTS);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObjectReview = jsonArray.getJSONObject(i);
-                String autor = jsonObjectReview.getString(KEY_AUTHOR);
+                String author = jsonObjectReview.getString(KEY_AUTHOR);
                 String content = jsonObjectReview.getString(KEY_CONTENT);
-                Review review = new Review(autor, content);
+                Review review = new Review(author, content);
                 result.add(review);
             }
         } catch (JSONException e) {
@@ -66,7 +67,7 @@ public class JSONUtils {
             JSONArray jsonArray = jsonObject.getJSONArray(KEY_RESULTS);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObjectTrailers = jsonArray.getJSONObject(i);
-                String key = BASE_UTUBE_URL + jsonObjectTrailers.getString(KEY_KEY_OF_VIDIO);
+                String key = BASE_YOUTUBE_URL + jsonObjectTrailers.getString(KEY_KEY_OF_VIDEO);
                 String name = jsonObjectTrailers.getString(KEY_NAME);
                 Trailer trailer = new Trailer(key, name);
                 result.add(trailer);

@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mymovies.adapters.MovieAdapter;
 import com.example.mymovies.data.MainViewModel;
 import com.example.mymovies.data.Movie;
 import com.example.mymovies.utils.JSONUtils;
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void downloadData(int methodOfSort, int page) {
-        JSONObject jsonObject = NetworkUtils.getJsonFromNetwork(methodOfSort, 1);
+        JSONObject jsonObject = NetworkUtils.getJSONFromNetwork(methodOfSort, 1);
         ArrayList<Movie> movies = JSONUtils.getMovieFromJSON(jsonObject);
         if (movies != null && !movies.isEmpty()) {
             viewModel.deleteAllMovies();
